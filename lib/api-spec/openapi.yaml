@@ -1,22 +1,35 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Madrasa & Tuitions Management System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: dashboard
+    description: Dashboard summary
+  - name: students
+    description: Student management
+  - name: teachers
+    description: Teacher management
+  - name: assignments
+    description: Assignment management
+  - name: lessons
+    description: Lesson management
+  - name: classes
+    description: Class management
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +37,521 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Mock login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Dashboard overview statistics
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent activity feed
+      responses:
+        "200":
+          description: Recent activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /students:
+    get:
+      operationId: getStudents
+      tags: [students]
+      summary: List all students
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: classId
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of students
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentList"
+
+    post:
+      operationId: createStudent
+      tags: [students]
+      summary: Create a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /students/{id}:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get student by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Student
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+    delete:
+      operationId: deleteStudent
+      tags: [students]
+      summary: Delete a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /teachers:
+    get:
+      operationId: getTeachers
+      tags: [teachers]
+      summary: List all teachers
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of teachers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherList"
+
+    post:
+      operationId: createTeacher
+      tags: [teachers]
+      summary: Create a teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+
+  /teachers/{id}:
+    get:
+      operationId: getTeacher
+      tags: [teachers]
+      summary: Get teacher by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Teacher
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateTeacher
+      tags: [teachers]
+      summary: Update a teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+
+    delete:
+      operationId: deleteTeacher
+      tags: [teachers]
+      summary: Delete a teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /assignments:
+    get:
+      operationId: getAssignments
+      tags: [assignments]
+      summary: List all assignments
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: classId
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of assignments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssignmentList"
+
+    post:
+      operationId: createAssignment
+      tags: [assignments]
+      summary: Create an assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assignment"
+
+  /assignments/{id}:
+    get:
+      operationId: getAssignment
+      tags: [assignments]
+      summary: Get assignment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Assignment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assignment"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateAssignment
+      tags: [assignments]
+      summary: Update an assignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignmentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assignment"
+
+    delete:
+      operationId: deleteAssignment
+      tags: [assignments]
+      summary: Delete an assignment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /lessons:
+    get:
+      operationId: getLessons
+      tags: [lessons]
+      summary: List all lessons
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: classId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of lessons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lesson"
+
+    post:
+      operationId: createLesson
+      tags: [lessons]
+      summary: Create a lesson
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lesson"
+
+  /lessons/{id}:
+    get:
+      operationId: getLesson
+      tags: [lessons]
+      summary: Get lesson by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lesson
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lesson"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateLesson
+      tags: [lessons]
+      summary: Update a lesson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lesson"
+
+    delete:
+      operationId: deleteLesson
+      tags: [lessons]
+      summary: Delete a lesson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /classes:
+    get:
+      operationId: getClasses
+      tags: [classes]
+      summary: List all classes
+      responses:
+        "200":
+          description: List of classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Class"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +562,503 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/AuthUser"
+
+    AuthUser:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+
+    DashboardSummary:
+      type: object
+      required: [totalStudents, totalTeachers, totalAssignments, totalLessons, totalClasses, activeStudents, pendingAssignments, ongoingLessons, attendanceRate, completionRate]
+      properties:
+        totalStudents:
+          type: integer
+        totalTeachers:
+          type: integer
+        totalAssignments:
+          type: integer
+        totalLessons:
+          type: integer
+        totalClasses:
+          type: integer
+        activeStudents:
+          type: integer
+        pendingAssignments:
+          type: integer
+        ongoingLessons:
+          type: integer
+        attendanceRate:
+          type: number
+        completionRate:
+          type: number
+
+    ActivityItem:
+      type: object
+      required: [id, type, message, timestamp, actor]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        message:
+          type: string
+        messageUr:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+        actor:
+          type: string
+        icon:
+          type: ["string", "null"]
+
+    Student:
+      type: object
+      required: [id, name, email, phone, classId, className, enrollDate, guardianName, status, grade, attendance]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        classId:
+          type: string
+        className:
+          type: string
+        enrollDate:
+          type: string
+        guardianName:
+          type: string
+        guardianPhone:
+          type: ["string", "null"]
+        status:
+          type: string
+        grade:
+          type: ["string", "null"]
+        attendance:
+          type: number
+        address:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    StudentInput:
+      type: object
+      required: [name, email, phone, classId, enrollDate, guardianName, status]
+      properties:
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        classId:
+          type: string
+        enrollDate:
+          type: string
+        guardianName:
+          type: string
+        guardianPhone:
+          type: ["string", "null"]
+        status:
+          type: string
+        grade:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    StudentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        classId:
+          type: string
+        enrollDate:
+          type: string
+        guardianName:
+          type: string
+        guardianPhone:
+          type: ["string", "null"]
+        status:
+          type: string
+        grade:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    StudentList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Student"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Teacher:
+      type: object
+      required: [id, name, email, phone, subjects, classes, qualification, hireDate, status]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        subjects:
+          type: array
+          items:
+            type: string
+        classes:
+          type: array
+          items:
+            type: string
+        qualification:
+          type: string
+        hireDate:
+          type: string
+        status:
+          type: string
+        specialization:
+          type: ["string", "null"]
+        experience:
+          type: ["integer", "null"]
+
+    TeacherInput:
+      type: object
+      required: [name, email, phone, subjects, qualification, hireDate, status]
+      properties:
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        subjects:
+          type: array
+          items:
+            type: string
+        classes:
+          type: array
+          items:
+            type: string
+        qualification:
+          type: string
+        hireDate:
+          type: string
+        status:
+          type: string
+        specialization:
+          type: ["string", "null"]
+        experience:
+          type: ["integer", "null"]
+
+    TeacherUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        email:
+          type: string
+        phone:
+          type: string
+        subjects:
+          type: array
+          items:
+            type: string
+        classes:
+          type: array
+          items:
+            type: string
+        qualification:
+          type: string
+        hireDate:
+          type: string
+        status:
+          type: string
+        specialization:
+          type: ["string", "null"]
+        experience:
+          type: ["integer", "null"]
+
+    TeacherList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Teacher"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Assignment:
+      type: object
+      required: [id, title, description, dueDate, assignedTo, status, createdBy, classId]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        description:
+          type: string
+        descriptionUr:
+          type: ["string", "null"]
+        dueDate:
+          type: string
+        assignedTo:
+          type: string
+        classId:
+          type: string
+        className:
+          type: string
+        status:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+        subject:
+          type: ["string", "null"]
+
+    AssignmentInput:
+      type: object
+      required: [title, description, dueDate, assignedTo, classId, status, createdBy]
+      properties:
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        description:
+          type: string
+        descriptionUr:
+          type: ["string", "null"]
+        dueDate:
+          type: string
+        assignedTo:
+          type: string
+        classId:
+          type: string
+        status:
+          type: string
+        createdBy:
+          type: string
+        subject:
+          type: ["string", "null"]
+
+    AssignmentUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        description:
+          type: string
+        descriptionUr:
+          type: ["string", "null"]
+        dueDate:
+          type: string
+        assignedTo:
+          type: string
+        classId:
+          type: string
+        status:
+          type: string
+        subject:
+          type: ["string", "null"]
+
+    AssignmentList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Assignment"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Lesson:
+      type: object
+      required: [id, title, classId, className, teacherId, teacherName, schedule, duration, status]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        classId:
+          type: string
+        className:
+          type: string
+        teacherId:
+          type: string
+        teacherName:
+          type: string
+        schedule:
+          type: string
+        duration:
+          type: integer
+        status:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        subject:
+          type: ["string", "null"]
+        progress:
+          type: ["number", "null"]
+
+    LessonInput:
+      type: object
+      required: [title, classId, teacherId, schedule, duration, status]
+      properties:
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        classId:
+          type: string
+        teacherId:
+          type: string
+        schedule:
+          type: string
+        duration:
+          type: integer
+        status:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        subject:
+          type: ["string", "null"]
+        progress:
+          type: ["number", "null"]
+
+    LessonUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        titleUr:
+          type: ["string", "null"]
+        classId:
+          type: string
+        teacherId:
+          type: string
+        schedule:
+          type: string
+        duration:
+          type: integer
+        status:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        subject:
+          type: ["string", "null"]
+        progress:
+          type: ["number", "null"]
+
+    Class:
+      type: object
+      required: [id, name, teacherId, teacherName, schedule, studentCount]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nameUr:
+          type: ["string", "null"]
+        teacherId:
+          type: string
+        teacherName:
+          type: string
+        schedule:
+          type: string
+        studentCount:
+          type: integer
+        subject:
+          type: ["string", "null"]
