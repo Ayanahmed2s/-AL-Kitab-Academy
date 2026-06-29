@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 export const translations = {
   en: {
@@ -25,7 +25,8 @@ export const translations = {
     attendanceRate: "Attendance Rate",
     completionRate: "Completion Rate",
     recentActivity: "Recent Activity",
-    switchingLanguage: "Switching language…",
+    pleaseWait: "Please wait…",
+    changingLanguage: "Changing language",
   },
   ur: {
     dashboard: "ڈیش بورڈ",
@@ -51,37 +52,26 @@ export const translations = {
     attendanceRate: "حاضری کی شرح",
     completionRate: "تکمیل کی شرح",
     recentActivity: "حالیہ سرگرمی",
-    switchingLanguage: "زبان تبدیل ہو رہی ہے…",
+    pleaseWait: "براہ کرم انتظار کریں…",
+    changingLanguage: "زبان تبدیل ہو رہی ہے",
   },
 };
 
 export type Language = "en" | "ur";
 
 export function useTranslation() {
-  const [lang, setLangState] = useState<Language>(() => {
+  const [lang] = useState<Language>(() => {
     const saved = localStorage.getItem("madrasa_lang") as Language;
     return saved || "en";
   });
 
-  const [langLoading, setLangLoading] = useState(false);
-
   useEffect(() => {
-    localStorage.setItem("madrasa_lang", lang);
     document.documentElement.dir = lang === "ur" ? "rtl" : "ltr";
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const setLang = useCallback((next: Language) => {
-    if (next === lang) return;
-    setLangLoading(true);
-    setTimeout(() => {
-      setLangState(next);
-      setTimeout(() => setLangLoading(false), 150);
-    }, 600);
-  }, [lang]);
-
-  const t = (key: keyof typeof translations.en) =>
+  const t = (key: keyof typeof translations.en): string =>
     translations[lang][key] ?? key;
 
-  return { lang, setLang, langLoading, t };
+  return { lang, t };
 }
