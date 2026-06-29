@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { useChat } from "@/hooks/useChat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -140,7 +141,15 @@ export function AIChat() {
                       : "bg-muted text-foreground rounded-tl-sm"
                   }`}
                 >
-                  {msg.content || (
+                  {msg.content ? (
+                    msg.role === "assistant" ? (
+                      <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-1 prose-strong:font-semibold">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )
+                  ) : (
                     <span className="flex items-center gap-1.5 text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
                       <span className="text-xs">Generating…</span>
