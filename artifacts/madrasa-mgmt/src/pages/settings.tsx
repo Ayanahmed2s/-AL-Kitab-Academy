@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { useAuthStore } from "@/hooks/use-auth";
 import { useTheme } from "next-themes";
@@ -8,14 +9,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function Settings() {
-  const { t, lang, setLang } = useTranslation();
+  const { t, lang } = useTranslation();
   const { theme, setTheme } = useTheme();
   const { user } = useAuthStore();
+  const [isReloading, setIsReloading] = useState(false);
 
   const handleLanguageChange = (val: string) => {
-    setLang(val as "en" | "ur");
+    if (val === lang) return;
+    setIsReloading(true);
+    setTimeout(() => {
+      localStorage.setItem("madrasa_lang", val);
+      window.location.reload();
+    }, 900);
   };
 
   const handleThemeChange = (val: string) => {
@@ -25,7 +33,21 @@ export default function Settings() {
   const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || "U";
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto relative">
+      {isReloading && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", backgroundColor: "rgba(255,255,255,0.55)" }}
+        >
+          <div className="flex flex-col items-center gap-5 rounded-2xl bg-white/90 border border-border shadow-2xl px-12 py-10 dark:bg-card/90">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <div className="flex flex-col items-center gap-1 text-center">
+              <p className="text-lg font-semibold text-foreground">{t("changingLanguage")}</p>
+              <p className="text-sm text-muted-foreground">{t("pleaseWait")}</p>
+            </div>
+          </div>
+        </div>
+      )}
       <h1 className="text-3xl font-bold tracking-tight text-primary">{t("settings")}</h1>
 
       <Card>

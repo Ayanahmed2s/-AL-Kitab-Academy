@@ -3,6 +3,7 @@ import { useTranslation } from "@/hooks/use-translation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, UserCog, ClipboardList, BookOpen, Book, CheckCircle, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AIChat } from "@/components/AIChat";
 
 export default function Dashboard() {
   const { t, lang } = useTranslation();
@@ -21,7 +22,8 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight text-primary">{t("dashboard")}</h1>
-      
+
+      {/* Stats grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, i) => (
           <Card key={i}>
@@ -33,14 +35,15 @@ export default function Dashboard() {
               {isSummaryLoading ? (
                 <Skeleton className="h-8 w-20" />
               ) : (
-                <div className="text-2xl font-bold">{stat.value || 0}</div>
+                <div className="text-2xl font-bold">{stat.value ?? 0}</div>
               )}
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Recent activity + AI chat side by side */}
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t("recentActivity")}</CardTitle>
@@ -54,27 +57,30 @@ export default function Dashboard() {
               <div className="space-y-4">
                 {activities?.length ? activities.map((activity) => (
                   <div key={activity.id} className="flex items-start gap-4 border-b last:border-0 pb-4 last:pb-0">
-                    <div className="bg-primary/10 p-2 rounded-full mt-1">
+                    <div className="bg-primary/10 p-2 rounded-full mt-1 shrink-0">
                       <Clock className="h-4 w-4 text-primary" />
                     </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <p className="text-sm font-medium leading-snug">
                         {lang === "ur" && activity.messageUr ? activity.messageUr : activity.message}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(activity.timestamp).toLocaleString(lang === "ur" ? "ur-PK" : "en-US")}
-                        {' • '}
+                        {" • "}
                         {activity.actor}
                       </p>
                     </div>
                   </div>
                 )) : (
-                  <div className="text-sm text-muted-foreground text-center py-4">No recent activity</div>
+                  <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
                 )}
               </div>
             )}
           </CardContent>
         </Card>
+
+        {/* AI Chatbot */}
+        <AIChat />
       </div>
     </div>
   );

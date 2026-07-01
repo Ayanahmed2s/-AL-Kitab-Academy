@@ -25,6 +25,8 @@ export const translations = {
     attendanceRate: "Attendance Rate",
     completionRate: "Completion Rate",
     recentActivity: "Recent Activity",
+    pleaseWait: "Please wait…",
+    changingLanguage: "Changing language",
   },
   ur: {
     dashboard: "ڈیش بورڈ",
@@ -50,24 +52,26 @@ export const translations = {
     attendanceRate: "حاضری کی شرح",
     completionRate: "تکمیل کی شرح",
     recentActivity: "حالیہ سرگرمی",
-  }
+    pleaseWait: "براہ کرم انتظار کریں…",
+    changingLanguage: "زبان تبدیل ہو رہی ہے",
+  },
 };
 
 export type Language = "en" | "ur";
 
 export function useTranslation() {
-  const [lang, setLang] = useState<Language>(() => {
+  const [lang] = useState<Language>(() => {
     const saved = localStorage.getItem("madrasa_lang") as Language;
     return saved || "en";
   });
 
   useEffect(() => {
-    localStorage.setItem("madrasa_lang", lang);
     document.documentElement.dir = lang === "ur" ? "rtl" : "ltr";
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const t = (key: keyof typeof translations.en) => translations[lang][key] || key;
+  const t = (key: keyof typeof translations.en): string =>
+    translations[lang][key] ?? key;
 
-  return { lang, setLang, t };
+  return { lang, t };
 }
