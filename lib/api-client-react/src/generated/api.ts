@@ -58,6 +58,11 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
+type QueryOptionsWithOptionalKey<TQueryFnData, TError, TData = TQueryFnData> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData>,
+  'queryKey'
+> & { queryKey?: QueryKey };
+
 
 
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
@@ -108,7 +113,7 @@ export const getHealthCheckQueryKey = () => {
     }
 
 
-export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>( options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -135,7 +140,7 @@ export type HealthCheckQueryError = ErrorType<unknown>
  */
 
 export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof healthCheck>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -255,7 +260,7 @@ export const getGetDashboardSummaryQueryKey = () => {
     }
 
 
-export const getGetDashboardSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardSummary>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDashboardSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetDashboardSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardSummary>>, TError = ErrorType<unknown>>( options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getDashboardSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -282,7 +287,7 @@ export type GetDashboardSummaryQueryError = ErrorType<unknown>
  */
 
 export function useGetDashboardSummary<TData = Awaited<ReturnType<typeof getDashboardSummary>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDashboardSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getDashboardSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -332,7 +337,7 @@ export const getGetRecentActivityQueryKey = () => {
     }
 
 
-export const getGetRecentActivityQueryOptions = <TData = Awaited<ReturnType<typeof getRecentActivity>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRecentActivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetRecentActivityQueryOptions = <TData = Awaited<ReturnType<typeof getRecentActivity>>, TError = ErrorType<unknown>>( options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getRecentActivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -359,7 +364,7 @@ export type GetRecentActivityQueryError = ErrorType<unknown>
  */
 
 export function useGetRecentActivity<TData = Awaited<ReturnType<typeof getRecentActivity>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRecentActivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getRecentActivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -563,7 +568,7 @@ export const getGetStudentQueryKey = (id: string,) => {
     }
 
 
-export const getGetStudentQueryOptions = <TData = Awaited<ReturnType<typeof getStudent>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getStudent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetStudentQueryOptions = <TData = Awaited<ReturnType<typeof getStudent>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getStudent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -590,15 +595,13 @@ export type GetStudentQueryError = ErrorType<ErrorResponse>
  */
 
 export function useGetStudent<TData = Awaited<ReturnType<typeof getStudent>>, TError = ErrorType<ErrorResponse>>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getStudent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getStudent>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ ):  UseQueryResult<TData, TError> {
 
   const queryOptions = getGetStudentQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return withQueryKey(query, queryOptions.queryKey);
+  return useQuery(queryOptions) as  UseQueryResult<TData, TError>;
 }
 
 
@@ -935,7 +938,7 @@ export const getGetTeacherQueryKey = (id: string,) => {
     }
 
 
-export const getGetTeacherQueryOptions = <TData = Awaited<ReturnType<typeof getTeacher>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTeacher>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetTeacherQueryOptions = <TData = Awaited<ReturnType<typeof getTeacher>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getTeacher>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -962,15 +965,13 @@ export type GetTeacherQueryError = ErrorType<ErrorResponse>
  */
 
 export function useGetTeacher<TData = Awaited<ReturnType<typeof getTeacher>>, TError = ErrorType<ErrorResponse>>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTeacher>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getTeacher>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+ ):  UseQueryResult<TData, TError> {
 
   const queryOptions = getGetTeacherQueryOptions(id,options)
 
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return withQueryKey(query, queryOptions.queryKey);
+  return useQuery(queryOptions) as  UseQueryResult<TData, TError>;
 }
 
 
@@ -1307,7 +1308,7 @@ export const getGetAssignmentQueryKey = (id: string,) => {
     }
 
 
-export const getGetAssignmentQueryOptions = <TData = Awaited<ReturnType<typeof getAssignment>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetAssignmentQueryOptions = <TData = Awaited<ReturnType<typeof getAssignment>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getAssignment>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1334,7 +1335,7 @@ export type GetAssignmentQueryError = ErrorType<ErrorResponse>
  */
 
 export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment>>, TError = ErrorType<ErrorResponse>>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getAssignment>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -1679,7 +1680,7 @@ export const getGetLessonQueryKey = (id: string,) => {
     }
 
 
-export const getGetLessonQueryOptions = <TData = Awaited<ReturnType<typeof getLesson>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLesson>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetLessonQueryOptions = <TData = Awaited<ReturnType<typeof getLesson>>, TError = ErrorType<ErrorResponse>>(id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getLesson>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1706,7 +1707,7 @@ export type GetLessonQueryError = ErrorType<ErrorResponse>
  */
 
 export function useGetLesson<TData = Awaited<ReturnType<typeof getLesson>>, TError = ErrorType<ErrorResponse>>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getLesson>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ id: string, options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getLesson>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -1897,7 +1898,7 @@ export const getGetClassesQueryKey = () => {
     }
 
 
-export const getGetClassesQueryOptions = <TData = Awaited<ReturnType<typeof getClasses>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getClasses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetClassesQueryOptions = <TData = Awaited<ReturnType<typeof getClasses>>, TError = ErrorType<unknown>>( options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getClasses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1924,7 +1925,7 @@ export type GetClassesQueryError = ErrorType<unknown>
  */
 
 export function useGetClasses<TData = Awaited<ReturnType<typeof getClasses>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getClasses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:QueryOptionsWithOptionalKey<Awaited<ReturnType<typeof getClasses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 

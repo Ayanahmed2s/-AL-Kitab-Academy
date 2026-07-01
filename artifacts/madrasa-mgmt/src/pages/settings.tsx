@@ -30,7 +30,12 @@ export default function Settings() {
     setTheme(val);
   };
 
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || "U";
+  const initials = user?.name
+    ?.split(/\s+/)
+    .filter(Boolean)
+    .map((n: string) => n[0])
+    .join("")
+    .toUpperCase() || "U";
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto relative">

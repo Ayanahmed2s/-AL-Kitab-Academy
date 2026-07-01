@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AuthUser } from '@workspace/api-client-react/src/generated/api.schemas';
+import type { AuthUser } from '@workspace/api-client-react';
 
 interface AuthState {
   user: AuthUser | null;
